@@ -1178,7 +1178,7 @@ def RandomizeDominion(setNames=None, options=None):
         counter = 0
         while not landscapeSet and counter < 3:
             # Shuffle all cards
-            cards = iter(random.sample(completeSet, len(completeSet)))
+            cards = iter(random.sample(list(completeSet), len(completeSet)))
 
             # Categorize cards from the shuffled pile
             while len(resultSet) < 10:
@@ -1194,18 +1194,18 @@ def RandomizeDominion(setNames=None, options=None):
 
         # Get final list of landscape cards
         if options and options.get("limit-landscapes"):
-            landscapeList = random.sample(waySet, len(waySet))[:1]
+            landscapeList = random.sample(list(waySet), len(waySet))[:1]
             landscapeList.extend(
-                random.sample(landscapeSet, len(landscapeSet))[: 2 - len(landscapeList)]
+                random.sample(list(landscapeSet), len(landscapeSet))[: 2 - len(landscapeList)]
             )
         else:
-            landscapeList = random.sample(landscapeSet, len(landscapeSet))[:3]
-            landscapeList.extend(random.sample(waySet, len(waySet))[:1])
+            landscapeList = random.sample(list(landscapeSet), len(landscapeSet))[:3]
+            landscapeList.extend(random.sample(list(waySet), len(waySet))[:1])
     else:
         kingdomSet = completeSet
         landscapeList = []
 
-        resultSet = set(random.sample(kingdomSet, 10))
+        resultSet = set(random.sample(list(kingdomSet), 10))
 
     # Enforce Alchemy rule
     if (options or {}).get("enforce-alchemy-rule", True):
@@ -1214,12 +1214,12 @@ def RandomizeDominion(setNames=None, options=None):
             # If there's only 1 Alchemy card, remove Alchemy from the options
             # and draw an addtional Kingdom card
             resultSet -= alchemyCards
-            resultSet.update(random.sample(kingdomSet - resultSet, 1))
+            resultSet.update(random.sample(list(kingdomSet) - resultSet, 1))
         elif len(alchemyCards) == 2:
             # If there are only 2 Alchemy cards, pull an additional Alchemy
             # card and randomly remove one non-Alchemy card
-            alchemyCards.update(random.sample(Alchemy.cards - alchemyCards, 1))
-            resultSet = alchemyCards.union(random.sample(resultSet, 7))
+            alchemyCards.update(random.sample(list(Alchemy.cards - alchemyCards), 1))
+            resultSet = alchemyCards.union(random.sample(list(resultSet), 7))
         # If there are 3 or more Alchemy cards, let it lie.
 
     # Young Witch support
@@ -1230,10 +1230,10 @@ def RandomizeDominion(setNames=None, options=None):
             # All eligible Bane cards are already part of the randomized set!
             # Add a new card to the set and pull a Bane from the randomized
             # cards.
-            resultSet.update(random.sample(kingdomSet - resultSet, 1))
-            baneCard = random.sample(resultSet & BaneCards, 1)[0]
+            resultSet.update(random.sample(list(kingdomSet - resultSet), 1))
+            baneCard = random.sample(list(resultSet & BaneCards), 1)[0]
         else:
-            baneCard = random.sample(eligibleBanes, 1)[0]
+            baneCard = random.sample(list(eligibleBanes), 1)[0]
             resultSet.add(baneCard)
 
     # Get card for Way of the Mouse. This uses similar rules to Young Witch, so
@@ -1252,18 +1252,18 @@ def RandomizeDominion(setNames=None, options=None):
             if includeBane:
                 eligibleMice.remove(baneCard)
 
-            mouseCard = random.sample(eligibleMice, 1)[0]
-            resultSet.update(random.sample(kingdomSet - resultSet, 1))
+            mouseCard = random.sample(list(eligibleMice), 1)[0]
+            resultSet.update(random.sample(list(kingdomSet - resultSet), 1))
             resultSet.remove(mouseCard)
         else:
-            mouseCard = random.sample(eligibleMice, 1)[0]
+            mouseCard = random.sample(list(eligibleMice), 1)[0]
         mouseSet.add(mouseCard)
 
     fullResults = resultSet.union(landscapeList)
 
     # Check for Colonies and Platinums
     includeColoniesAndPlatinum = Prosperity in sets and PlatinumLove.intersection(
-        random.sample(fullResults, 2)
+        random.sample(list(fullResults), 2)
     )
 
     # Check for Potions
@@ -1274,7 +1274,7 @@ def RandomizeDominion(setNames=None, options=None):
 
     # Check for Shelters
     includeShelters = DarkAges in sets and ShelterLove.intersection(
-        random.sample(fullResults, 2)
+        random.sample(list(fullResults), 2)
     )
     # Check for Ruins
     includeRuins = LooterCards & resultSet
@@ -1309,7 +1309,7 @@ def RandomizeDominion(setNames=None, options=None):
 
     # Check for Boulder traps
     includeBoulderTraps = Antiquities in sets and TrapLove.intersection(
-        random.sample(fullResults, 1)
+        random.sample(list(fullResults), 1)
     )
 
     # Create final list
