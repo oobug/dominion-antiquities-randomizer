@@ -1378,5 +1378,4 @@ def RandomizeDominion(setNames=None, options=None):
 
 
 if __name__ == "__main__":
-    print("caleb is boss")
     print("\n".join(RandomizeDominion()))
